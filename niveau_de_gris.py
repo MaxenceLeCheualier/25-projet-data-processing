@@ -38,10 +38,8 @@ for el in Element:
 
     #METHOD TO CROP THE IMAGE TO AVOID THE BORDERS AND LEGEND 
     fig, ax = plt.subplots()
-    ax.imshow(img_array, cmap = 'gray')
+    ax.imshow(img_array)
     coords = {}
-
-
 
     selector = RectangleSelector( ax, on_select, useblit = True, button = [1], minspanx = 5, minspany = 5, spancoords = 'pixels', interactive = True)
 
@@ -50,16 +48,18 @@ for el in Element:
     y1, y2 = sorted([coords['y1'], coords['y2']])
     cropped_img = img_gris_array[y1:y2, x1:x2]
     new_image = Image.fromarray(cropped_img)
-    #new_chemin = f"projet_mines-Paris-data-processing_2026\donnes_MEB-EDS\export_tif\Laitier1_{el}-Kα_cropped.png"
-    #new_image.save(new_chemin)
+    new_chemin = f"projet_mines-Paris-data-processing_2026\donnes_MEB-EDS\export_tif\Laitier1_{el}-Kα_cropped.png"
+    new_image.save(new_chemin)
+    cropped_image = Image.open(new_chemin)
 
-    img_gris= convert_gray(new_image)
+    #CONVERT TO GRAY THE NEW IMAGE
+    img_gris= cropped_image.convert("L") 
     img_gris_array = np.array(img_gris)
 
 
-    h,l = np.shape(img_gris_array)
-    vmin = np.min(img_gris_array)
-    vmax = np.max(img_gris_array)
+    h,l = np.shape(cropped_img)
+    vmin = np.min(cropped_img)
+    vmax = np.max(cropped_img)
 
     print("For", el, "The size is :", (h,l),  ". The minimum value is :", vmin, ". The maximum value is:", vmax)
 
