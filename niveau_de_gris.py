@@ -20,4 +20,6 @@ h,l = np.shape(img_gris_array)
 vmin = np.min(img_gris_array)
 vmax = np.max(img_gris_array)
 
+
 print("The size is :", (h,l),  ". The minimum value is :", vmin, ". The maximum value is:", vmax)
+
