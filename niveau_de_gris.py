@@ -25,8 +25,3 @@ for el in Element:
     print(el,img_gris_array)
 
     print("For", el, "The size is :", (h,l),  ". The minimum value is :", vmin, ". The maximum value is:", vmax)
-
-
-
-
-
