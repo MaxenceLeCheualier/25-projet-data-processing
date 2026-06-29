@@ -58,8 +58,11 @@ def main(input_dir, out_dir):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    for file_path in input_dir.glob("*.txt"):
-        convert_txt_to_tiff(file_path, out_dir)
+    txt_files = list(input_dir.glob("*.txt"))
+    print(f"Fichiers trouvés : {txt_files}")
 
+    for file_path in txt_files:
+        convert_txt_to_tiff(file_path, out_dir)
+        
 if __name__ == "__main__":
-    main("projet_mines-Paris-data-processing_2026/donnees_XRF/export_text", "projet_mines-Paris-data-processing_2026/donnees_XRF/export_tiff")
+    main("projet_mines-Paris-data-processing_2026/donnees_XRF/export_txt", "projet_mines-Paris-data-processing_2026/donnees_XRF/export_tiff")
