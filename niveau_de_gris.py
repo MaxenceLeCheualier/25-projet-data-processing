@@ -7,7 +7,8 @@ def convert_gray(image):
     R=image_array[:,:,0]
     G=image_array[:,:,1]
     B=image_array[:,:,2]
-    Gray =  np.round(0.2126*R + 0.7152*G + 0.0722*B).astype(np.uint8) #convention 709
+    #Gray =  np.round(0.2126*R + 0.7152*G + 0.0722*B).astype(np.uint8) #convention 709
+    Gray = R.astype(np.uint8)
     image_gray = Image.fromarray(Gray)
     return image_gray 
 
