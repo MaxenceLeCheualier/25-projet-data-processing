@@ -11,7 +11,22 @@ class TifflImage:
         '''Initialize the TifflImage with a path and name.'''
         self.path = path
         self.data = tiff.imread(path).astype(float)
-    
+
+        if self.data.ndim == 3:
+            self.to_grayscale()
+
+    def to_grayscale(self, channel=None):
+        '''
+        Convertit une image RGB(A) en image 2D (niveaux de gris).
+        channel=None : luminance standard (0.299R + 0.587G + 0.114B)
+        channel=0/1/2 : garde uniquement le canal Rouge/Vert/Bleu
+        '''
+        if channel is not None:
+            self.data = self.data[:, :, channel]
+        else:
+            r, g, b = self.data[:, :, 0], self.data[:, :, 1], self.data[:, :, 2]
+            self.data = 0.299 * r + 0.587 * g + 0.114 * b
+
     @property
     def shape(self):
         '''Return the shape of the image data.'''
@@ -20,6 +35,14 @@ class TifflImage:
     def flatten_data(self):
         '''Flatten the image data into a 1D array.'''
         return self.data.flatten()
+
+    def coords(self):
+        '''Return the coordinates of the image data as a 2D array.'''
+        nx, ny = self.shape
+        x = np.arange(nx)
+        y = np.arange(ny)
+        xv, yv = np.meshgrid(x, y, indexing='ij')
+        return np.column_stack((xv.flatten(), yv.flatten()))
     
     def compute_statistics(self):
         '''Compute basic statistics of the image data: mean, median, mode, standard deviation, min, and max.'''
@@ -54,9 +77,27 @@ class TifflImage:
         plt.grid(True)
         plt.show()
 
+    
+    def compute_variogram(self, n_lags=25, max_lag=None, sample_size=3000, model="spherical"):
+        '''Compute the variogram of the image data using skgstat.'''
+        coords = self.coords()
+        values = self.flatten_data()
+
+        valid = ~np.isnan(values)
+        coords = coords[valid]
+        values = values[valid]
+
+        idx = np.random.choice(len(values), size=min(sample_size, len(values)), replace=False)
+
+        V = skg.Variogram(coords[idx], values[idx], maxlag=max_lag, n_lags=n_lags, model=model)
+
+        V.plot()
+        plt.show()
+        return V
+
 if __name__ == "__main__":
     
-    chemin_image = "Laitier1-x500_BSE-carto.tif"
+    chemin_image = "projet_mines-Paris-data-processing_2026/donnes_MEB-EDS/export_tif/Laitier1_Ca-Kα.tif"
 
     mon_image = TifflImage(path=chemin_image)
     
@@ -70,5 +111,9 @@ if __name__ == "__main__":
 
     print("\nAffichage de l'histogramme...")
     mon_image.plot_histogram(bins=30)
+
+    print(mon_image.shape)
+    mon_image.compute_variogram()
     
     print("--- Fin du traitement ---")
+
