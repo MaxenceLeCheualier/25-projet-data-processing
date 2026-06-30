@@ -7,11 +7,9 @@ import skgstat as skg
 
 class TifflImage:
 
-    def __init__(self, path, name): 
+    def __init__(self, path): 
         '''Initialize the TifflImage with a path and name.'''
         self.path = path
-        self.name = name
-        # Correction ici : on lit l'image puis on la convertit en float
         self.data = tiff.imread(path).astype(float)
     
     @property
@@ -50,18 +48,17 @@ class TifflImage:
         '''Plot a histogram of the image data.'''
         flattened_data = self.flatten_data()
         plt.hist(flattened_data, bins=bins, color='blue', alpha=0.7)
-        plt.title(f'Histogram of {self.name}')
+        plt.title(f'Histogram of {self.path}')
         plt.xlabel('Pixel Value')
         plt.ylabel('Frequency')
         plt.grid(True)
         plt.show()
--
+
 if __name__ == "__main__":
     
-    chemin_image = "projet_mines-Paris-data-processing_2026/donnes_MEB-EDS/export_tiff"
-    nom_image = "Laitier1_Cr-Kα.tif"
+    chemin_image = "Laitier1-x500_BSE-carto.tif"
 
-    mon_image = TifflImage(path=chemin_image, name=nom_image)
+    mon_image = TifflImage(path=chemin_image)
     
     print(f"Dimensions de l'image : {mon_image.shape}")
     
