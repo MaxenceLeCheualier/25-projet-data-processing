@@ -56,7 +56,7 @@ class TifflImage:
 
 if __name__ == "__main__":
     
-    chemin_image = "Laitier1-x500_BSE-carto.tif"
+    chemin_image = "projet_mines-Paris-data-processing_2026\donnes_MEB-EDS\export_tif\Laitier1_Al-K.tif"
 
     mon_image = TifflImage(path=chemin_image)
     
