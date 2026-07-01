@@ -1,0 +1,85 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image 
+from niveau_de_gris import convert_gray
+from matplotlib.ticker import LinearLocator
+from analyse_satistique import TifflImage
+import scipy
+
+
+#Analyse de l'image BSE
+bse = "Laitier1-x500_BSE-carto_cropped.tiff"
+ex_meb_eds = "projet_mines-Paris-data-processing_2026\donnes_MEB-EDS\export_tif\Laitier1_Al-K.tif"
+meb_image = Image.open(ex_meb_eds)
+meb = meb_image.convert("L")
+meb_array = np.array(meb)
+x_meb,y_meb = np.shape(meb_array)
+
+img = Image.open(bse)
+bse_gris_tiff = TifflImage(bse)
+
+#bse_gris_tiff.plot_histogram()
+
+#On peut observer 5 phases (cf document, aide de la part d'imageJ)
+
+phase_1 = [0,88]
+phase_2 = [88,120]
+phase_3 = [120,145]
+phase_4 = [145,254]
+phase_5 = [255,255]
+
+bse_gris_array = np.array(bse_gris_tiff.data)
+
+x,y = np.shape(bse_gris_array)
+
+
+zoom = max(x_meb/x, y_meb/y)
+bse_gris_array_zoom = scipy.ndimage.zoom(bse_gris_array, zoom, output=None, order=3, mode='constant', cval=0.0, prefilter=True, grid_mode=False)
+
+
+x,y = np.shape(bse_gris_array_zoom)
+print(x,y)
+coord_phase_1 = []
+coord_phase_2 = []
+coord_phase_3 = []
+coord_phase_4 = []
+coord_phase_5 = []
+
+for i in range(x):
+    for j in range(y):
+        if bse_gris_array[i,j] >=0 and bse_gris_array[i,j] < 88 :
+            coord_phase_1.append((i,j))
+        elif bse_gris_array[i,j] >=88 and bse_gris_array[i,j] < 120 :
+            coord_phase_2.append((i,j))
+        elif bse_gris_array[i,j] >=120 and bse_gris_array[i,j] < 145 :
+            coord_phase_3.append((i,j))
+        elif bse_gris_array[i,j] >=145 and bse_gris_array[i,j] < 254 :
+            coord_phase_4.append((i,j))
+        else :
+            coord_phase_5.append((i,j))
+
+print(coord_phase_1,coord_phase_2,coord_phase_3,coord_phase_4,coord_phase_5)
+
+'''
+#plot d'un laitier 
+txt=f"projet_mines-Paris-data-processing_2026\donnes_MEB-EDS\export_tif\Laitier1_Al-K_cropped.png"
+img = Image.open(txt)
+img_gris= convert_gray(img)
+Z = np.array(img_gris)
+
+fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+x,y= np.shape(Z)
+x = np.arange(0,x,1)
+y = np.arange(0,y,1)
+X,Y = np.meshgrid(y,x)
+
+
+# Plot the surface.
+surf = ax.plot_surface(X, Y, Z, cmap="coolwarm",
+                       linewidth=0, antialiased=False)
+
+
+# Add a color bar which maps values to colors.
+fig.colorbar(surf, shrink=0.5, aspect=5)
+
+plt.show()'''

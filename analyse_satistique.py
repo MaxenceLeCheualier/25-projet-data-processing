@@ -4,6 +4,7 @@ import pandas as pd
 from scipy import stats
 import matplotlib.pyplot as plt
 import skgstat as skg
+from niveau_de_gris import convert_gray
 
 class TifflImage:
 
@@ -14,6 +15,9 @@ class TifflImage:
 
         if self.data.ndim == 3:
             self.to_grayscale()
+        
+        if np.max(self.data) > 255 and np.max(self.data) <= 65535 :
+            self.to_int8()
 
     def to_grayscale(self, channel=None):
         '''
@@ -26,6 +30,11 @@ class TifflImage:
         else:
             r, g, b = self.data[:, :, 0], self.data[:, :, 1], self.data[:, :, 2]
             self.data = 0.299 * r + 0.587 * g + 0.114 * b
+
+    def to_int8(self):
+        self.data = np.round((self.data/65535)*255)
+        
+
 
     @property
     def shape(self):
@@ -97,7 +106,7 @@ class TifflImage:
 
 if __name__ == "__main__":
     
-    chemin_image = "projet_mines-Paris-data-processing_2026/donnes_MEB-EDS/export_tif/Laitier1_Ca-Kα.tif"
+    chemin_image = "Laitier1-x500_BSE-carto.tif"
 
     mon_image = TifflImage(path=chemin_image)
     
