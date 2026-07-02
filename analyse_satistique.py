@@ -78,7 +78,7 @@ class TifflImage:
         plt.show()
 
     
-    def compute_variogram(self, n_lags=25, max_lag=None, sample_size=3000, model="spherical"):
+    def compute_variogram(self, n_lags=150, max_lag=None, sample_size=10000, model="spherical"):
         '''Compute the variogram of the image data using skgstat.'''
         coords = self.coords()
         values = self.flatten_data()
@@ -94,10 +94,10 @@ class TifflImage:
         V.plot()
         plt.show()
         return V
-
+    
 if __name__ == "__main__":
     
-    chemin_image = "projet_mines-Paris-data-processing_2026/donnes_MEB-EDS/export_tif/Laitier1_Ca-Kα.tif"
+    chemin_image = "Laitier1-x500_BSE-carto.tif"
 
     mon_image = TifflImage(path=chemin_image)
     
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     mon_image.plot_histogram(bins=30)
 
     print(mon_image.shape)
-    mon_image.compute_variogram()
+    mon_image.compute_variogram_circular()
     
     print("--- Fin du traitement ---")
 
