@@ -9,13 +9,14 @@ import scipy
 
 #Analyse de l'image BSE
 bse = "Laitier1-x500_BSE-carto_cropped.tiff"
-ex_meb_eds = "projet_mines-Paris-data-processing_2026\donnes_MEB-EDS\export_tif\Laitier1_Al-K.tif"
+ex_meb_eds = "projet_mines-Paris-data-processing_2026\donnes_MEB-EDS\export_tif\Laitier1_Al-K_cropped.png"
 meb_image = Image.open(ex_meb_eds)
 meb = meb_image.convert("L")
 meb_array = np.array(meb)
 x_meb,y_meb = np.shape(meb_array)
 
 img = Image.open(bse)
+img = img.resize((x_meb,y_meb))
 bse_gris_tiff = TifflImage(bse)
 
 #bse_gris_tiff.plot_histogram()
@@ -32,41 +33,69 @@ bse_gris_array = np.array(bse_gris_tiff.data)
 
 x,y = np.shape(bse_gris_array)
 
+#bse_gris_array_zoom = bse_gris_array.resize((x_meb,y_meb))
+zoom = (x_meb/x, y_meb/y)
+bse_gris_array = scipy.ndimage.zoom(bse_gris_array, zoom, output=None, order=3, mode='constant', cval=0.0, prefilter=True, grid_mode=False)
 
-zoom = max(x_meb/x, y_meb/y)
-bse_gris_array_zoom = scipy.ndimage.zoom(bse_gris_array, zoom, output=None, order=3, mode='constant', cval=0.0, prefilter=True, grid_mode=False)
 
+#print(np.shape(bse_gris_array_zoom))
+#print(x,y)
+#print(x_meb,y_meb)
 
-x,y = np.shape(bse_gris_array_zoom)
-print(x,y)
-coord_phase_1 = []
-coord_phase_2 = []
-coord_phase_3 = []
-coord_phase_4 = []
-coord_phase_5 = []
+coord_phases = {}
+coord_phases['phase_1']= []
+coord_phases['phase_2']= []
+coord_phases['phase_3']= []
+coord_phases['phase_4']= []
+coord_phases['phase_5']= []
 
+x,y = np.shape(bse_gris_array)
 for i in range(x):
     for j in range(y):
         if bse_gris_array[i,j] >=0 and bse_gris_array[i,j] < 88 :
-            coord_phase_1.append((i,j))
+            coord_phases['phase_1'].append((i,j))
         elif bse_gris_array[i,j] >=88 and bse_gris_array[i,j] < 120 :
-            coord_phase_2.append((i,j))
+            coord_phases['phase_2'].append((i,j))
         elif bse_gris_array[i,j] >=120 and bse_gris_array[i,j] < 145 :
-            coord_phase_3.append((i,j))
+            coord_phases['phase_3'].append((i,j))
         elif bse_gris_array[i,j] >=145 and bse_gris_array[i,j] < 254 :
-            coord_phase_4.append((i,j))
+            coord_phases['phase_4'].append((i,j))
         else :
-            coord_phase_5.append((i,j))
+            coord_phases['phase_5'].append((i,j))
 
-print(coord_phase_1,coord_phase_2,coord_phase_3,coord_phase_4,coord_phase_5)
+
+
+#plot d'un laitier 
+Z = meb_array
+
+
+#Gray values in our Latier
+gris_phase_1 = []
+gris_phase_2 = []
+gris_phase_3 = []
+gris_phase_4 = []
+gris_phase_5 = []
+
+
+for coordinates in coord_phases['phase_1']:
+    gris_phase_1.append(Z[coordinates])
+for coordinates in coord_phases['phase_2']:
+    gris_phase_2.append(Z[coordinates])
+for coordinates in coord_phases['phase_3']:
+    gris_phase_3.append(Z[coordinates])
+for coordinates in coord_phases['phase_4']:
+    gris_phase_4.append(Z[coordinates])
+for coordinates in coord_phases['phase_5']:
+    gris_phase_5.append(Z[coordinates])
+
+#mean gray values (+ vairance and écart-type)
+mean_value_5 = np.mean(gris_phase_5)
+var_value_5 = np.var(gris_phase_5)
+std_value_5 = np.std(gris_phase_5)
+
+print(mean_value_5, var_value_5, std_value_5)
 
 '''
-#plot d'un laitier 
-txt=f"projet_mines-Paris-data-processing_2026\donnes_MEB-EDS\export_tif\Laitier1_Al-K_cropped.png"
-img = Image.open(txt)
-img_gris= convert_gray(img)
-Z = np.array(img_gris)
-
 fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 x,y= np.shape(Z)
 x = np.arange(0,x,1)

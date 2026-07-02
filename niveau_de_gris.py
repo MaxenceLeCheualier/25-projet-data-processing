@@ -22,7 +22,7 @@ h,l = np.shape(img_gris_array)
 vmin = np.min(img_gris_array)
 vmax = np.max(img_gris_array)
 
-print("For Al The size is :", (h,l),  ". The minimum value is :", vmin, ". The maximum value is:", vmax)
+#print("For Al The size is :", (h,l),  ". The minimum value is :", vmin, ". The maximum value is:", vmax)
 
 Element=np.array(['C','Ca','Cr','Fe','Mn','Na','O','P','S','Si','Ti','V'])
 
@@ -37,7 +37,7 @@ for el in Element:
     vmin = np.min(img_gris_array)
     vmax = np.max(img_gris_array)
 
-    print("For", el, "The size is :", (h,l),  ". The minimum value is :", vmin, ". The maximum value is:", vmax)
+    #print("For", el, "The size is :", (h,l),  ". The minimum value is :", vmin, ". The maximum value is:", vmax)
 
 
 
